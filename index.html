@@ -85,8 +85,8 @@
 
   <label for="peso">Peso (kg): </label>
   <input type="number" id="peso" placeholder="Ej: 70" style="padding:5px; width:80px;">
-  <label for="altura">Altura (m): </label>
-  <input type="number" id="altura" step="0.01" placeholder="Ej: 1.75" style="padding:5px; width:80px;">
+  <label for="altura">Altura (cm): </label>
+  <input type="number" id="altura" placeholder="Ej: 175" style="padding:5px; width:80px;">
   <button onclick="calcularIMC()" class="cta-btn" style="margin-left:10px; padding:10px 20px; font-size:1em;">Calcular IMC</button>
 
   <p id="resultado" style="margin-top:20px; font-size:1.2em; font-weight:bold;"></p>
@@ -95,11 +95,13 @@
 <script>
 function calcularIMC() {
   const peso = parseFloat(document.getElementById('peso').value);
-  const altura = parseFloat(document.getElementById('altura').value);
-  if(!peso || !altura) {
+  const alturaCm = parseFloat(document.getElementById('altura').value);
+  if(!peso || !alturaCm) {
     document.getElementById('resultado').innerText = "Por favor ingresa peso y altura válidos.";
     return;
   }
+  
+  const altura = alturaCm / 100; // Convertir cm a metros
   const imc = peso / (altura * altura);
   let estado = "";
 
@@ -111,6 +113,7 @@ function calcularIMC() {
   document.getElementById('resultado').innerText = `Tu IMC es ${imc.toFixed(2)} → ${estado}`;
 }
 </script>
+
 
   <footer>
     <p>Síguenos en <a href="https://instagram.com/Fit23D" target="_blank">@Fit23D</a> para tips, retos y promociones exclusivas.</p>
