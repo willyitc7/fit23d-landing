@@ -197,7 +197,89 @@ function planificarMeta() {
 }
 </script>
 
-  
+
+  <div class="section">
+  <h2>Generador de Dieta Personalizada Fit23D</h2>
+  <p>Ingresa tus datos y descubre dos opciones de menú adaptadas a tu cuerpo y actividad.</p>
+
+  <label>Sexo: </label>
+  <select id="sexoDieta">
+    <option value="hombre">Hombre</option>
+    <option value="mujer">Mujer</option>
+  </select><br><br>
+
+  <label>Edad: </label>
+  <input type="number" id="edadDieta" placeholder="Ej: 25" style="width:80px; padding:5px;">
+  <label>Peso (kg): </label>
+  <input type="number" id="pesoDieta" placeholder="Ej: 70" style="width:80px; padding:5px;">
+  <label>Altura (cm): </label>
+  <input type="number" id="alturaDieta" placeholder="Ej: 175" style="width:80px; padding:5px;"><br><br>
+
+  <label>Nivel de actividad: </label>
+  <select id="actividadDieta">
+    <option value="1.2">Sedentario</option>
+    <option value="1.375">Ligera</option>
+    <option value="1.55">Moderada</option>
+    <option value="1.725">Intensa</option>
+    <option value="1.9">Muy intensa</option>
+  </select><br><br>
+
+  <label>Comidas por día: </label>
+  <select id="comidasDieta">
+    <option value="3">3 comidas</option>
+    <option value="5">5 comidas</option>
+  </select><br><br>
+
+  <button onclick="generarDieta()" class="cta-btn" style="padding:10px 20px; font-size:1em;">Generar Menús</button>
+
+  <div id="resultadoDieta" style="margin-top:20px; font-weight:bold;"></div>
+</div>
+
+<script>
+function generarDieta() {
+  const sexo = document.getElementById('sexoDieta').value;
+  const edad = parseInt(document.getElementById('edadDieta').value);
+  const peso = parseFloat(document.getElementById('pesoDieta').value);
+  const altura = parseFloat(document.getElementById('alturaDieta').value);
+  const actividad = parseFloat(document.getElementById('actividadDieta').value);
+  const comidas = parseInt(document.getElementById('comidasDieta').value);
+
+  if(!edad || !peso || !altura) {
+    document.getElementById('resultadoDieta').innerHTML = "Por favor completa todos los campos.";
+    return;
+  }
+
+  // Harris-Benedict
+  let tmb = sexo === 'hombre'
+    ? 66 + (13.7 * peso) + (5 * altura) - (6.8 * edad)
+    : 655 + (9.6 * peso) + (1.8 * altura) - (4.7 * edad);
+
+  const tdee = tmb * actividad;
+
+  // Calorías por comida
+  const calPorComida = tdee / comidas;
+
+  // Menús ejemplo (puedes personalizar)
+  const menuA = [];
+  const menuB = [];
+
+  for(let i=1;i<=comidas;i++){
+    menuA.push(`Comida ${i}: Proteína, carbohidratos y vegetales (~${(calPorComida*0.95).toFixed(0)} kcal)`);
+    menuB.push(`Comida ${i}: Frutas, granos integrales y proteína ligera (~${(calPorComida*1.05).toFixed(0)} kcal)`);
+  }
+
+  let html = `<h3>Tu requerimiento calórico diario: ${tdee.toFixed(0)} kcal</h3>`;
+  html += `<h4>Menú A</h4><ul>`;
+  menuA.forEach(item => html += `<li>${item}</li>`);
+  html += `</ul>`;
+  html += `<h4>Menú B</h4><ul>`;
+  menuB.forEach(item => html += `<li>${item}</li>`);
+  html += `</ul>`;
+
+  document.getElementById('resultadoDieta').innerHTML = html;
+}
+</script>
+
   <footer>
     <p>Síguenos en <a href="https://instagram.com/Fit23D" target="_blank">@Fit23D</a> para tips, retos y promociones exclusivas.</p>
     <p>&copy; 2026 Fit23D</p>
