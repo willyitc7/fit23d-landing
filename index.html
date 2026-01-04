@@ -79,6 +79,38 @@
     <p>Haz clic en el botón para descargar tu PDF y empezar a registrar tu progreso hoy mismo.</p>
     <a href="assets/progreso-fit-2026.pdf" download class="cta-btn">Comienza tu Progreso Hoy</a>
   </div>
+<div class="section">
+  <h2>Calculadora de IMC</h2>
+  <p>Ingresa tu peso y altura para calcular tu Índice de Masa Corporal y saber tu estado de forma.</p>
+
+  <label for="peso">Peso (kg): </label>
+  <input type="number" id="peso" placeholder="Ej: 70" style="padding:5px; width:80px;">
+  <label for="altura">Altura (m): </label>
+  <input type="number" id="altura" step="0.01" placeholder="Ej: 1.75" style="padding:5px; width:80px;">
+  <button onclick="calcularIMC()" class="cta-btn" style="margin-left:10px; padding:10px 20px; font-size:1em;">Calcular IMC</button>
+
+  <p id="resultado" style="margin-top:20px; font-size:1.2em; font-weight:bold;"></p>
+</div>
+
+<script>
+function calcularIMC() {
+  const peso = parseFloat(document.getElementById('peso').value);
+  const altura = parseFloat(document.getElementById('altura').value);
+  if(!peso || !altura) {
+    document.getElementById('resultado').innerText = "Por favor ingresa peso y altura válidos.";
+    return;
+  }
+  const imc = peso / (altura * altura);
+  let estado = "";
+
+  if(imc < 18.5) estado = "Bajo peso";
+  else if(imc < 25) estado = "Normal";
+  else if(imc < 30) estado = "Sobrepeso";
+  else estado = "Obesidad";
+
+  document.getElementById('resultado').innerText = `Tu IMC es ${imc.toFixed(2)} → ${estado}`;
+}
+</script>
 
   <footer>
     <p>Síguenos en <a href="https://instagram.com/Fit23D" target="_blank">@Fit23D</a> para tips, retos y promociones exclusivas.</p>
