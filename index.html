@@ -114,7 +114,90 @@ function calcularIMC() {
 }
 </script>
 
+<!-- Calculadora de calorías diarias -->
+<div class="section">
+  <h2>Calculadora de Calorías Diarias</h2>
+  <p>Descubre cuántas calorías necesitas al día según tu edad, peso, altura y nivel de actividad.</p>
 
+  <label>Sexo: </label>
+  <select id="sexo">
+    <option value="hombre">Hombre</option>
+    <option value="mujer">Mujer</option>
+  </select><br><br>
+
+  <label>Edad: </label>
+  <input type="number" id="edad" placeholder="Ej: 25" style="width:80px; padding:5px;">
+  <label>Peso (kg): </label>
+  <input type="number" id="pesoCal" placeholder="Ej: 70" style="width:80px; padding:5px;">
+  <label>Altura (cm): </label>
+  <input type="number" id="alturaCal" placeholder="Ej: 175" style="width:80px; padding:5px;"><br><br>
+
+  <label>Nivel de actividad: </label>
+  <select id="actividad">
+    <option value="1.2">Sedentario</option>
+    <option value="1.375">Ligera</option>
+    <option value="1.55">Moderada</option>
+    <option value="1.725">Intensa</option>
+    <option value="1.9">Muy intensa</option>
+  </select><br><br>
+
+  <button onclick="calcularCalorias()" class="cta-btn" style="padding:10px 20px; font-size:1em;">Calcular Calorías</button>
+  <p id="resultadoCalorias" style="margin-top:20px; font-weight:bold;"></p>
+</div>
+
+<!-- Planificador de metas -->
+<div class="section">
+  <h2>Planificador de Metas Semanales</h2>
+  <p>Ingresa tu objetivo y la página te dice cuánto avanzar cada semana.</p>
+
+  <label>Meta total: </label>
+  <input type="number" id="metaTotal" placeholder="Ej: 5 kg / 10000 pasos" style="width:120px; padding:5px;">
+  <label>Duración (semanas): </label>
+  <input type="number" id="semanas" placeholder="Ej: 4" style="width:80px; padding:5px;"><br><br>
+
+  <button onclick="planificarMeta()" class="cta-btn" style="padding:10px 20px; font-size:1em;">Calcular Plan Semanal</button>
+  <p id="resultadoMeta" style="margin-top:20px; font-weight:bold;"></p>
+</div>
+
+<script>
+// Calculadora de calorías (TDEE)
+function calcularCalorias() {
+  const sexo = document.getElementById('sexo').value;
+  const edad = parseInt(document.getElementById('edad').value);
+  const peso = parseFloat(document.getElementById('pesoCal').value);
+  const altura = parseFloat(document.getElementById('alturaCal').value);
+  const actividad = parseFloat(document.getElementById('actividad').value);
+
+  if(!edad || !peso || !altura) {
+    document.getElementById('resultadoCalorias').innerText = "Por favor completa todos los campos.";
+    return;
+  }
+
+  // Fórmula Mifflin-St Jeor
+  let tmb = sexo === 'hombre'
+    ? 10*peso + 6.25*altura - 5*edad + 5
+    : 10*peso + 6.25*altura - 5*edad - 161;
+
+  let tdee = tmb * actividad;
+  document.getElementById('resultadoCalorias').innerText = `Tu requerimiento calórico diario es aproximadamente ${tdee.toFixed(0)} kcal.`;
+}
+
+// Planificador de metas
+function planificarMeta() {
+  const meta = parseFloat(document.getElementById('metaTotal').value);
+  const semanas = parseInt(document.getElementById('semanas').value);
+
+  if(!meta || !semanas) {
+    document.getElementById('resultadoMeta').innerText = "Por favor completa ambos campos.";
+    return;
+  }
+
+  const avance = meta / semanas;
+  document.getElementById('resultadoMeta').innerText = `Debes avanzar aproximadamente ${avance.toFixed(2)} cada semana para alcanzar tu meta en ${semanas} semanas.`;
+}
+</script>
+
+  
   <footer>
     <p>Síguenos en <a href="https://instagram.com/Fit23D" target="_blank">@Fit23D</a> para tips, retos y promociones exclusivas.</p>
     <p>&copy; 2026 Fit23D</p>
