@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Fit23D - Tu Progreso Fitness</title>
-<!-- Librería jsPDF para generar PDF -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
 body { font-family: Arial, sans-serif; background: #f5f7fa; color: #333; text-align:center; padding:20px; }
@@ -50,7 +49,7 @@ footer { margin-top:50px; color:#555; }
   <p id="resultado"></p>
 </div>
 
-<!-- Sección Generador de Plan -->
+<!-- Sección Generador de Plan Profesional -->
 <div class="box">
   <h2>Genera tu Plan de Entrenamiento</h2>
   <input type="text" id="nombrePlan" placeholder="Tu nombre">
@@ -60,14 +59,7 @@ footer { margin-top:50px; color:#555; }
     <option value="Intermedio">Intermedio</option>
     <option value="Avanzado">Avanzado</option>
   </select>
-  <select id="objetivoPlan">
-    <option value="">Selecciona objetivo</option>
-    <option value="Fuerza">Fuerza</option>
-    <option value="Hipertrofia">Hipertrofia</option>
-    <option value="Resistencia">Resistencia</option>
-    <option value="Perder peso">Perder peso</option>
-  </select>
-  <button onclick="generarPlanPDF()" class="cta-btn">Generar PDF</button>
+  <button onclick="generarPlanPDF()" class="cta-btn">Generar Plan Profesional PDF</button>
 </div>
 
 <!-- Tips rápidos -->
@@ -125,50 +117,61 @@ function calcularIMC() {
     `Tu IMC es ${imc.toFixed(2)} → ${estado}<br>${perdida}`;
 }
 
-/* Generar PDF del plan de entrenamiento */
+/* Generar PDF del plan profesional */
 function generarPlanPDF() {
   const nombre = document.getElementById('nombrePlan').value || "Usuario";
   const nivel = document.getElementById('nivelPlan').value;
-  const objetivo = document.getElementById('objetivoPlan').value;
 
-  if(!nivel || !objetivo) {
-    alert("Por favor selecciona nivel y objetivo.");
+  if(!nivel) {
+    alert("Por favor selecciona nivel.");
     return;
   }
 
-  const dias = ["Lunes","Martes","Miércoles","Jueves","Viernes"];
-  const ejercicios = {
+  const rutina = {
     "Principiante": {
-      "Fuerza": ["Flexiones 3x10", "Sentadillas 3x15", "Planchas 3x30s"],
-      "Hipertrofia": ["Press banca 3x8", "Curl bíceps 3x12", "Sentadillas 3x12"],
-      "Resistencia": ["Correr 20 min", "Saltos 3x15", "Burpees 3x10"],
-      "Perder peso": ["Caminata 30 min", "Jumping jacks 3x15", "Abdominales 3x15"]
+      "Lunes": ["Press banca 3x10", "Fondos en paralelas 3x8", "Aperturas con mancuernas 3x12", "Press francés 3x10"],
+      "Martes": ["Dominadas asistidas 3x6", "Remo con barra 3x10", "Curl bíceps con mancuernas 3x12", "Pull-over 3x10"],
+      "Miércoles": ["Sentadillas 3x12", "Prensa de piernas 3x10", "Zancadas 3x10 cada pierna", "Peso muerto piernas rígidas 3x10"],
+      "Jueves": ["Press militar 3x10", "Elevaciones laterales 3x12", "Encogimientos de hombros 3x12", "Face pulls 3x12"],
+      "Viernes": ["Burpees 3x10", "Plancha 3x30s", "Russian twist 3x15", "Elevaciones de piernas 3x12"]
     },
     "Intermedio": {
-      "Fuerza": ["Peso muerto 4x6", "Dominadas 3x8", "Press militar 4x6"],
-      "Hipertrofia": ["Press banca 4x10", "Curl bíceps 4x12", "Sentadillas 4x10"],
-      "Resistencia": ["Correr 30 min", "Burpees 4x12", "Jump rope 4x2min"],
-      "Perder peso": ["HIIT 20 min", "Sentadillas 4x15", "Plancha 4x45s"]
+      "Lunes": ["Press banca 4x10", "Fondos en paralelas 4x10", "Aperturas con mancuernas 4x12", "Press francés 4x10"],
+      "Martes": ["Dominadas 4x8", "Remo con barra 4x10", "Curl bíceps barra 4x12", "Pull-over 4x10"],
+      "Miércoles": ["Sentadillas 4x12", "Prensa de piernas 4x12", "Zancadas 4x12", "Peso muerto piernas rígidas 4x10"],
+      "Jueves": ["Press militar 4x10", "Elevaciones laterales 4x12", "Encogimientos hombros 4x12", "Face pulls 4x12"],
+      "Viernes": ["Burpees 4x12", "Plancha 4x45s", "Russian twist 4x20", "Elevaciones de piernas 4x15"]
     },
     "Avanzado": {
-      "Fuerza": ["Sentadilla 5x5", "Peso muerto 5x5", "Press banca 5x5"],
-      "Hipertrofia": ["Superset pecho/espalda 4x12", "Piernas 4x15", "Brazos 4x15"],
-      "Resistencia": ["Correr 45 min", "HIIT 30 min", "Saltos 5x20"],
-      "Perder peso": ["HIIT 30 min", "Burpees 5x15", "Abdominales 5x20"]
+      "Lunes": ["Press banca 5x10", "Fondos con lastre 5x10", "Aperturas con mancuernas 5x12", "Press francés 5x12"],
+      "Martes": ["Dominadas con lastre 5x8", "Remo barra 5x10", "Curl bíceps barra 5x12", "Pull-over 5x12"],
+      "Miércoles": ["Sentadillas 5x12", "Prensa de piernas 5x12", "Zancadas con mancuernas 5x12", "Peso muerto piernas rígidas 5x12"],
+      "Jueves": ["Press militar 5x10", "Elevaciones laterales 5x15", "Encogimientos hombros 5x15", "Face pulls 5x15"],
+      "Viernes": ["Burpees 5x15", "Plancha 5x60s", "Russian twist 5x25", "Elevaciones de piernas 5x20"]
     }
   };
 
-  let plan = dias.map(dia => `${dia}: ${ejercicios[nivel][objetivo][Math.floor(Math.random()*3)]}`);
-
+  const dias = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes"];
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
   doc.setFontSize(18);
-  doc.text(`Plan de Entrenamiento de ${nombre}`, 20, 20);
+  doc.text(`Plan Profesional de Entrenamiento de ${nombre}`, 20, 20);
   doc.setFontSize(14);
-  plan.forEach((item, i) => {
-    doc.text(item, 20, 40 + i*10);
+
+  let y = 40;
+  dias.forEach(dia => {
+    doc.setFont(undefined, 'bold');
+    doc.text(dia, 20, y);
+    y += 8;
+    doc.setFont(undefined, 'normal');
+    rutina[nivel][dia].forEach(ejercicio => {
+      doc.text(`- ${ejercicio}`, 25, y);
+      y += 7;
+    });
+    y += 5;
   });
-  doc.save(`${nombre}_PlanEntrenamiento.pdf`);
+
+  doc.save(`${nombre}_Plan_Entrenamiento_Profesional.pdf`);
 }
 </script>
 
