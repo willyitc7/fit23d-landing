@@ -3,7 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Fit23D - Progreso Fitness</title>
+<title>Fit23D - Tu Progreso Fitness</title>
+<!-- Librería jsPDF para generar PDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
 body { font-family: Arial, sans-serif; background: #f5f7fa; color: #333; text-align:center; padding:20px; }
 header { background: linear-gradient(90deg,#1e90ff,#ff7f50); color:white; padding:60px 20px; border-radius:15px; }
@@ -11,36 +13,72 @@ header h1 { font-size:2.5em; margin-bottom:10px; }
 header p { font-size:1.2em; margin-bottom:20px; }
 .cta-btn { background:#ff7f50; color:white; padding:15px 40px; font-size:1.2em; border:none; border-radius:50px; cursor:pointer; text-decoration:none; transition:0.3s; display:inline-block; }
 .cta-btn:hover { background:#ff6333; }
-.imc-box { background:#fff; padding:30px; border-radius:15px; box-shadow:0 5px 15px rgba(0,0,0,0.1); max-width:350px; margin:30px auto; }
-.imc-box input { padding:10px; width:100px; margin:5px; border-radius:5px; border:1px solid #ddd; }
-.imc-box button { margin-top:10px; }
+.cta-btn-blue { background: #1e90ff; color: white; padding: 15px 40px; font-size: 1.2em; border: none; border-radius: 50px; cursor: pointer; transition: 0.3s; }
+.cta-btn-blue:hover { background: #1c86ee; }
+
+.box { background:#fff; padding:30px; border-radius:15px; box-shadow:0 5px 15px rgba(0,0,0,0.1); max-width:400px; margin:30px auto; text-align:left; }
+.box input, .box select { padding:10px; width:100%; margin:5px 0; border-radius:5px; border:1px solid #ddd; }
+.box button { margin-top:10px; width:100%; }
+
 #resultado { margin-top:15px; font-weight:bold; }
+
 footer { margin-top:50px; color:#555; }
 
 /* Responsive */
 @media (max-width:480px){
   header h1 { font-size:1.8em; }
   header p { font-size:1em; }
-  .cta-btn { padding:12px 25px; font-size:1em; }
-  .imc-box input { width:80px; }
+  .cta-btn, .cta-btn-blue { padding:12px 25px; font-size:1em; }
+  .box input { width:100%; }
 }
 </style>
 </head>
 <body>
 
 <header>
-  <h1>Tu Hoja de Progreso Fitness</h1>
-  <p>Calcula tu IMC, descubre tu tipo y descarga tu hoja de progreso</p>
-  <!-- PDF original -->
+  <h1>Fit23D - Tu Hoja de Progreso Fitness</h1>
+  <p>Calcula tu IMC, crea tu plan de entrenamiento y descarga tus PDFs</p>
   <a href="assets/progreso-fit-2026.pdf" download class="cta-btn">Descargar Hoja Fit</a>
 </header>
 
-<div class="imc-box">
+<!-- Sección IMC -->
+<div class="box">
+  <h2>Calcula tu IMC</h2>
   <input type="number" id="peso" placeholder="Peso (lbs)">
   <input type="number" id="altura" placeholder="Altura (cm)">
-  <br>
   <button onclick="calcularIMC()" class="cta-btn-blue">Calcular IMC</button>
   <p id="resultado"></p>
+</div>
+
+<!-- Sección Generador de Plan -->
+<div class="box">
+  <h2>Genera tu Plan de Entrenamiento</h2>
+  <input type="text" id="nombrePlan" placeholder="Tu nombre">
+  <select id="nivelPlan">
+    <option value="">Selecciona nivel</option>
+    <option value="Principiante">Principiante</option>
+    <option value="Intermedio">Intermedio</option>
+    <option value="Avanzado">Avanzado</option>
+  </select>
+  <select id="objetivoPlan">
+    <option value="">Selecciona objetivo</option>
+    <option value="Fuerza">Fuerza</option>
+    <option value="Hipertrofia">Hipertrofia</option>
+    <option value="Resistencia">Resistencia</option>
+    <option value="Perder peso">Perder peso</option>
+  </select>
+  <button onclick="generarPlanPDF()" class="cta-btn">Generar PDF</button>
+</div>
+
+<!-- Tips rápidos -->
+<div class="box">
+  <h2>Tips de Nutrición</h2>
+  <ul>
+    <li>Hidrátate al menos 2 litros al día 💧</li>
+    <li>Incluye proteínas en cada comida 🍗</li>
+    <li>Evita azúcares y procesados 🍬</li>
+    <li>Duerme mínimo 7 horas 🛌</li>
+  </ul>
 </div>
 
 <footer>
@@ -48,6 +86,7 @@ footer { margin-top:50px; color:#555; }
 </footer>
 
 <script>
+/* Calcular IMC */
 function calcularIMC() {
   let pesoLbs = parseFloat(document.getElementById('peso').value);
   const alturaCm = parseFloat(document.getElementById('altura').value);
@@ -57,12 +96,10 @@ function calcularIMC() {
     return;
   }
 
-  // Convertimos libras a kg para calcular IMC
   const pesoKg = pesoLbs / 2.20462;
   const alturaM = alturaCm / 100;
   const imc = pesoKg / (alturaM * alturaM);
 
-  // Clasificación avanzada de IMC
   let estado = "";
   if(imc < 16) estado = "Delgadez severa";
   else if(imc < 17) estado = "Delgadez moderada";
@@ -73,7 +110,6 @@ function calcularIMC() {
   else if(imc < 40) estado = "Obesidad grado II";
   else estado = "Obesidad grado III (mórbida)";
 
-  // Calcular libras a bajar si está por encima de peso normal
   let perdida = "";
   if(imc < 18.5) {
     perdida = "Estás por debajo del peso normal. Considera aumentar peso de manera saludable.";
@@ -87,6 +123,52 @@ function calcularIMC() {
 
   document.getElementById('resultado').innerHTML = 
     `Tu IMC es ${imc.toFixed(2)} → ${estado}<br>${perdida}`;
+}
+
+/* Generar PDF del plan de entrenamiento */
+function generarPlanPDF() {
+  const nombre = document.getElementById('nombrePlan').value || "Usuario";
+  const nivel = document.getElementById('nivelPlan').value;
+  const objetivo = document.getElementById('objetivoPlan').value;
+
+  if(!nivel || !objetivo) {
+    alert("Por favor selecciona nivel y objetivo.");
+    return;
+  }
+
+  const dias = ["Lunes","Martes","Miércoles","Jueves","Viernes"];
+  const ejercicios = {
+    "Principiante": {
+      "Fuerza": ["Flexiones 3x10", "Sentadillas 3x15", "Planchas 3x30s"],
+      "Hipertrofia": ["Press banca 3x8", "Curl bíceps 3x12", "Sentadillas 3x12"],
+      "Resistencia": ["Correr 20 min", "Saltos 3x15", "Burpees 3x10"],
+      "Perder peso": ["Caminata 30 min", "Jumping jacks 3x15", "Abdominales 3x15"]
+    },
+    "Intermedio": {
+      "Fuerza": ["Peso muerto 4x6", "Dominadas 3x8", "Press militar 4x6"],
+      "Hipertrofia": ["Press banca 4x10", "Curl bíceps 4x12", "Sentadillas 4x10"],
+      "Resistencia": ["Correr 30 min", "Burpees 4x12", "Jump rope 4x2min"],
+      "Perder peso": ["HIIT 20 min", "Sentadillas 4x15", "Plancha 4x45s"]
+    },
+    "Avanzado": {
+      "Fuerza": ["Sentadilla 5x5", "Peso muerto 5x5", "Press banca 5x5"],
+      "Hipertrofia": ["Superset pecho/espalda 4x12", "Piernas 4x15", "Brazos 4x15"],
+      "Resistencia": ["Correr 45 min", "HIIT 30 min", "Saltos 5x20"],
+      "Perder peso": ["HIIT 30 min", "Burpees 5x15", "Abdominales 5x20"]
+    }
+  };
+
+  let plan = dias.map(dia => `${dia}: ${ejercicios[nivel][objetivo][Math.floor(Math.random()*3)]}`);
+
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+  doc.setFontSize(18);
+  doc.text(`Plan de Entrenamiento de ${nombre}`, 20, 20);
+  doc.setFontSize(14);
+  plan.forEach((item, i) => {
+    doc.text(item, 20, 40 + i*10);
+  });
+  doc.save(`${nombre}_PlanEntrenamiento.pdf`);
 }
 </script>
 
