@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Fit23D - Progreso Fitness</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
 body { font-family: Arial, sans-serif; background: #f5f7fa; color: #333; text-align:center; padding:20px; }
 header { background: linear-gradient(90deg,#1e90ff,#ff7f50); color:white; padding:60px 20px; border-radius:15px; }
@@ -23,7 +22,9 @@ footer { margin-top:50px; color:#555; }
 
 <header>
   <h1>Tu Hoja de Progreso Fitness</h1>
-  <p>Calcula tu IMC y descarga tu progreso en PDF</p>
+  <p>Calcula tu IMC y descarga tu hoja de progreso</p>
+  <!-- Aquí usamos tu PDF original -->
+  <a href="assets/progreso-fit-2026.pdf" download class="cta-btn">Descargar Hoja Fit</a>
 </header>
 
 <div class="imc-box">
@@ -32,7 +33,6 @@ footer { margin-top:50px; color:#555; }
   <br>
   <button onclick="calcularIMC()" class="cta-btn">Calcular IMC</button>
   <p id="resultado"></p>
-  <button onclick="descargarPDF()" class="cta-btn" style="margin-top:10px;">Descargar Progreso</button>
 </div>
 
 <footer>
@@ -40,8 +40,6 @@ footer { margin-top:50px; color:#555; }
 </footer>
 
 <script>
-let ultimoIMC = null;
-
 function calcularIMC() {
   const peso = parseFloat(document.getElementById('peso').value);
   const alturaCm = parseFloat(document.getElementById('altura').value);
@@ -57,21 +55,6 @@ function calcularIMC() {
   else if(imc < 30) estado = "Sobrepeso";
   else estado = "Obesidad";
   document.getElementById('resultado').innerText = `Tu IMC es ${imc.toFixed(2)} → ${estado}`;
-  ultimoIMC = {peso, alturaCm, imc, estado};
-}
-
-function descargarPDF() {
-  if(!ultimoIMC) { alert("Primero calcula tu IMC"); return; }
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF();
-  doc.setFontSize(18);
-  doc.text("Hoja de Progreso Fitness",10,20);
-  doc.setFontSize(14);
-  doc.text(`Peso: ${ultimoIMC.peso} kg`,10,35);
-  doc.text(`Altura: ${ultimoIMC.alturaCm} cm`,10,45);
-  doc.text(`IMC: ${ultimoIMC.imc.toFixed(2)}`,10,55);
-  doc.text(`Estado: ${ultimoIMC.estado}`,10,65);
-  doc.save("Progreso_Fitness.pdf");
 }
 </script>
 
