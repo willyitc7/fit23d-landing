@@ -30,13 +30,13 @@ footer { margin-top:50px; color:#555; }
 
 <header>
   <h1>Tu Hoja de Progreso Fitness</h1>
-  <p>Calcula tu IMC y descarga tu hoja de progreso</p>
+  <p>Calcula tu IMC, descubre tu tipo y descarga tu hoja de progreso</p>
   <!-- PDF original -->
   <a href="assets/progreso-fit-2026.pdf" download class="cta-btn">Descargar Hoja Fit</a>
 </header>
 
 <div class="imc-box">
-  <input type="number" id="peso" placeholder="Peso (kg)">
+  <input type="number" id="peso" placeholder="Peso (lbs)">
   <input type="number" id="altura" placeholder="Altura (cm)">
   <br>
   <button onclick="calcularIMC()" class="cta-btn">Calcular IMC</button>
@@ -49,34 +49,40 @@ footer { margin-top:50px; color:#555; }
 
 <script>
 function calcularIMC() {
-  const peso = parseFloat(document.getElementById('peso').value);
+  let pesoLbs = parseFloat(document.getElementById('peso').value);
   const alturaCm = parseFloat(document.getElementById('altura').value);
-  if(!peso || !alturaCm) {
+
+  if(!pesoLbs || !alturaCm) {
     document.getElementById('resultado').innerText = "Por favor ingresa peso y altura válidos.";
     return;
   }
-  
-  const altura = alturaCm / 100;
-  const imc = peso / (altura * altura);
-  let estado = "";
-  let perdida = "";
 
+  // Convertimos libras a kg para calcular IMC
+  const pesoKg = pesoLbs / 2.20462;
+  const alturaM = alturaCm / 100;
+  const imc = pesoKg / (alturaM * alturaM);
+
+  // Clasificación avanzada de IMC
+  let estado = "";
+  if(imc < 16) estado = "Delgadez severa";
+  else if(imc < 17) estado = "Delgadez moderada";
+  else if(imc < 18.5) estado = "Delgadez leve";
+  else if(imc < 25) estado = "Normal";
+  else if(imc < 30) estado = "Sobrepeso";
+  else if(imc < 35) estado = "Obesidad grado I";
+  else if(imc < 40) estado = "Obesidad grado II";
+  else estado = "Obesidad grado III (mórbida)";
+
+  // Calcular libras a bajar si está por encima de peso normal
+  let perdida = "";
   if(imc < 18.5) {
-    estado = "Bajo peso";
     perdida = "Estás por debajo del peso normal. Considera aumentar peso de manera saludable.";
   } else if(imc < 25) {
-    estado = "Normal";
     perdida = "Estás en peso normal ✔️";
-  } else if(imc < 30) {
-    estado = "Sobrepeso";
-    const pesoMaxNormal = 24.9 * (altura * altura);
-    const librasBajar = (peso - pesoMaxNormal) * 2.20462;
-    perdida = `Debes bajar aproximadamente ${librasBajar.toFixed(1)} libras para estar en peso normal`;
   } else {
-    estado = "Obesidad";
-    const pesoMaxNormal = 24.9 * (altura * altura);
-    const librasBajar = (peso - pesoMaxNormal) * 2.20462;
-    perdida = `Debes bajar aproximadamente ${librasBajar.toFixed(1)} libras para estar en peso normal`;
+    const pesoMaxNormalKg = 24.9 * (alturaM * alturaM);
+    const librasBajar = (pesoKg - pesoMaxNormalKg) * 2.20462;
+    perdida = `Debes bajar aproximadamente ${librasBajar.toFixed(1)} lbs para estar en peso normal`;
   }
 
   document.getElementById('resultado').innerHTML = 
