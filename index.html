@@ -16,6 +16,14 @@ header p { font-size:1.2em; margin-bottom:20px; }
 .imc-box button { margin-top:10px; }
 #resultado { margin-top:15px; font-weight:bold; }
 footer { margin-top:50px; color:#555; }
+
+/* Responsive */
+@media (max-width:480px){
+  header h1 { font-size:1.8em; }
+  header p { font-size:1em; }
+  .cta-btn { padding:12px 25px; font-size:1em; }
+  .imc-box input { width:80px; }
+}
 </style>
 </head>
 <body>
@@ -23,7 +31,7 @@ footer { margin-top:50px; color:#555; }
 <header>
   <h1>Tu Hoja de Progreso Fitness</h1>
   <p>Calcula tu IMC y descarga tu hoja de progreso</p>
-  <!-- Aquí usamos tu PDF original -->
+  <!-- PDF original -->
   <a href="assets/progreso-fit-2026.pdf" download class="cta-btn">Descargar Hoja Fit</a>
 </header>
 
@@ -47,14 +55,32 @@ function calcularIMC() {
     document.getElementById('resultado').innerText = "Por favor ingresa peso y altura válidos.";
     return;
   }
+  
   const altura = alturaCm / 100;
   const imc = peso / (altura * altura);
   let estado = "";
-  if(imc < 18.5) estado = "Bajo peso";
-  else if(imc < 25) estado = "Normal";
-  else if(imc < 30) estado = "Sobrepeso";
-  else estado = "Obesidad";
-  document.getElementById('resultado').innerText = `Tu IMC es ${imc.toFixed(2)} → ${estado}`;
+  let perdida = "";
+
+  if(imc < 18.5) {
+    estado = "Bajo peso";
+    perdida = "Estás por debajo del peso normal. Considera aumentar peso de manera saludable.";
+  } else if(imc < 25) {
+    estado = "Normal";
+    perdida = "Estás en peso normal ✔️";
+  } else if(imc < 30) {
+    estado = "Sobrepeso";
+    const pesoMaxNormal = 24.9 * (altura * altura);
+    const librasBajar = (peso - pesoMaxNormal) * 2.20462;
+    perdida = `Debes bajar aproximadamente ${librasBajar.toFixed(1)} libras para estar en peso normal`;
+  } else {
+    estado = "Obesidad";
+    const pesoMaxNormal = 24.9 * (altura * altura);
+    const librasBajar = (peso - pesoMaxNormal) * 2.20462;
+    perdida = `Debes bajar aproximadamente ${librasBajar.toFixed(1)} libras para estar en peso normal`;
+  }
+
+  document.getElementById('resultado').innerHTML = 
+    `Tu IMC es ${imc.toFixed(2)} → ${estado}<br>${perdida}`;
 }
 </script>
 
