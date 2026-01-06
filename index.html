@@ -11,7 +11,6 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Roboto',sans-serif;}
 body{background:#f5f7fa;color:#333;text-align:center;}
-
 header{
   background:linear-gradient(135deg,#1e90ff,#ff7f50);
   color:white;padding:80px 20px;
@@ -55,14 +54,16 @@ footer{margin:50px 0;color:#555;}
   </button>
 </header>
 
+<!-- IMC -->
 <div class="box">
   <h2>Calcula tu IMC</h2>
-  <input type="number" id="peso" placeholder="Peso (lbs)">
+  <input type="number" id="peso" placeholder="Peso (libras)">
   <input type="number" id="altura" placeholder="Altura (cm)">
   <button onclick="calcularIMC()">Calcular IMC</button>
   <p id="resultado"></p>
 </div>
 
+<!-- OBJETIVOS -->
 <div class="box" id="objetivosBox">
   <h2>Cuéntanos tus objetivos</h2>
   <input type="text" id="nombrePlan" placeholder="Tu nombre">
@@ -90,20 +91,38 @@ footer{margin:50px 0;color:#555;}
 
 <script>
 function calcularIMC(){
-  const pesoLbs = document.getElementById("peso").value;
-  const alturaCm = document.getElementById("altura").value;
+  const pesoLbs = parseFloat(document.getElementById("peso").value);
+  const alturaCm = parseFloat(document.getElementById("altura").value);
   const resultado = document.getElementById("resultado");
 
-  if(!pesoLbs || !alturaCm){
-    resultado.innerText="Datos inválidos";
+  if(isNaN(pesoLbs) || isNaN(alturaCm)){
+    resultado.innerHTML = "❌ Datos inválidos";
     return;
   }
 
   const pesoKg = pesoLbs / 2.20462;
-  const h = alturaCm / 100;
-  const imc = (pesoKg / (h*h)).toFixed(2);
+  const alturaM = alturaCm / 100;
 
-  resultado.innerHTML = `Tu IMC es <b>${imc}</b>`;
+  const imc = pesoKg / (alturaM * alturaM);
+
+  const pesoNormalMaxKg = 24.9 * (alturaM * alturaM);
+  const pesoNormalMaxLbs = pesoNormalMaxKg * 2.20462;
+  const librasABajar = pesoLbs - pesoNormalMaxLbs;
+
+  let texto = `
+    <b>IMC:</b> ${imc.toFixed(2)}<br>
+    <b>Peso máximo normal:</b> ${pesoNormalMaxLbs.toFixed(1)} lbs<br>
+  `;
+
+  if(imc > 24.9){
+    texto += `⚠️ <b>Debes bajar ${librasABajar.toFixed(1)} lbs</b> para estar en peso normal.`;
+  } else if(imc < 18.5){
+    texto += `⚠️ Estás por debajo del peso normal.`;
+  } else {
+    texto += `✅ Estás en <b>peso normal</b>.`;
+  }
+
+  resultado.innerHTML = texto;
 }
 
 function generarPlanPDF(){
@@ -118,12 +137,12 @@ function generarPlanPDF(){
   }
 
   let series="3x12", descanso="60s";
-  if(nivel==="Intermedio"){series="4x10"; descanso="75s";}
-  if(nivel==="Avanzado"){series="4x15"; descanso="90s";}
+  if(nivel==="Intermedio"){series="4x10";descanso="75s";}
+  if(nivel==="Avanzado"){series="4x15";descanso="90s";}
 
   const rutina={
     Hombre:{
-      Lunes:["Pectorales","Bíceps"],
+      Lunes:["Pecho","Bíceps"],
       Martes:["Piernas"],
       Miércoles:["Hombros","Tríceps"],
       Jueves:["Espalda"],
@@ -142,7 +161,7 @@ function generarPlanPDF(){
   const pdf = new jsPDF();
 
   pdf.setFontSize(18);
-  pdf.text("PLAN DE ENTRENAMIENTO FIT23D", 15, 20);
+  pdf.text("PLAN DE ENTRENAMIENTO FIT23D",15,20);
   pdf.setFontSize(12);
   pdf.text(`Nombre: ${nombre}`,15,30);
   pdf.text(`Sexo: ${sexo}`,15,38);
@@ -151,9 +170,9 @@ function generarPlanPDF(){
   pdf.text(`Series: ${series} | Descanso: ${descanso}`,15,62);
 
   let y=75;
-  Object.keys(rutina[sexo]).forEach(dia=>{
-    pdf.text(dia,15,y); y+=6;
-    rutina[sexo][dia].forEach(e=>{
+  Object.keys(rutina[sexo]).forEach(d=>{
+    pdf.text(d,15,y); y+=6;
+    rutina[sexo][d].forEach(e=>{
       pdf.text(`• ${e} ${series}`,20,y); y+=6;
     });
     y+=4;
