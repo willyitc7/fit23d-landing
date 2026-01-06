@@ -3,170 +3,157 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Fit23D - Transformación Fitness PRO</title>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+<title>Fit23D | Plan Profesional</title>
 
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Roboto',sans-serif;}
-body{background:#f5f7fa;color:#333;text-align:center;}
+body {
+  font-family: Arial, sans-serif;
+  background:#f4f6f9;
+  margin:0;
+  padding:20px;
+  text-align:center;
+}
 
-header{
+header {
   background:linear-gradient(135deg,#1e90ff,#ff7f50);
-  color:white;padding:80px 20px;
-}
-header h1{font-size:3em;}
-header p{margin:15px 0 30px;}
-.cta-btn{
-  background:#ffdd57;color:#000;
-  padding:18px 50px;font-size:1.3em;
-  border:none;border-radius:50px;
-  cursor:pointer;transition:.3s;
-}
-.cta-btn:hover{transform:scale(1.05);}
-
-.box{
-  background:#fff;padding:30px;
+  color:#fff;
+  padding:50px 20px;
   border-radius:20px;
-  box-shadow:0 10px 25px rgba(0,0,0,.1);
-  max-width:550px;margin:40px auto;
+}
+
+section {
+  background:#fff;
+  margin:25px auto;
+  padding:25px;
+  max-width:600px;
+  border-radius:15px;
+  box-shadow:0 5px 15px rgba(0,0,0,0.1);
+}
+
+input, select, button {
+  padding:12px;
+  width:90%;
+  margin:8px 0;
+  border-radius:8px;
+  border:1px solid #ccc;
+}
+
+button {
+  background:#ff7f50;
+  color:#fff;
+  font-size:16px;
+  border:none;
+  cursor:pointer;
+}
+
+button:hover {
+  background:#ff6333;
+}
+
+#salida {
+  margin-top:20px;
   text-align:left;
+  font-size:15px;
 }
-.box h2{color:#1e90ff;margin-bottom:15px;}
-.box input,.box select,.box button{
-  width:100%;padding:12px;
-  margin:7px 0;border-radius:10px;
-  border:1px solid #ddd;
-}
-.box button{
-  background:#1e90ff;color:#fff;
-  border:none;cursor:pointer;
-}
-.box button:hover{background:#1874cd;}
-
-.testimonio{
-  background:#e0f7ff;padding:15px;
-  border-radius:15px;margin:10px 0;
-}
-
-footer{margin:50px 0;color:#555;}
 </style>
 </head>
 
 <body>
 
 <header>
-  <h1>Fit23D PRO</h1>
-  <p>Plan profesional de entrenamiento personalizado</p>
-  <button class="cta-btn" onclick="document.getElementById('objetivosBox').scrollIntoView({behavior:'smooth'})">
-    Genera tu Plan GRATIS
-  </button>
+  <h1>Plan Fitness Inteligente</h1>
+  <p>Dieta profesional personalizada</p>
 </header>
 
-<div class="box">
-  <h2>Calcula tu IMC</h2>
-  <input type="number" id="peso" placeholder="Peso (lbs)">
-  <input type="number" id="altura" placeholder="Altura (cm)">
-  <button onclick="calcularIMC()">Calcular IMC</button>
-  <p id="resultado"></p>
-</div>
+<section>
+<h2>Cuéntanos tus objetivos</h2>
 
-<div class="box" id="objetivosBox">
-  <h2>Cuéntanos tus objetivos</h2>
-  <input type="text" id="nombrePlan" placeholder="Tu nombre">
-  <select id="sexoPlan">
-    <option value="">Sexo</option>
-    <option>Hombre</option>
-    <option>Mujer</option>
-  </select>
-  <select id="nivelPlan">
-    <option value="">Nivel</option>
-    <option>Principiante</option>
-    <option>Intermedio</option>
-    <option>Avanzado</option>
-  </select>
-  <select id="objetivoPlan">
-    <option value="">Objetivo</option>
-    <option>Perder Grasa</option>
-    <option>Tonificar</option>
-    <option>Ganar Fuerza</option>
-  </select>
-  <button onclick="generarPlanPDF()">Generar PDF Profesional</button>
-</div>
+<select id="sexo">
+  <option value="">Sexo</option>
+  <option value="hombre">Hombre</option>
+  <option value="mujer">Mujer</option>
+</select>
 
-<div class="box">
-  <h2>Tips de Nutrición</h2>
-  <ul>
-    <li>💧 2 litros de agua diarios</li>
-    <li>🍗 Proteína en cada comida</li>
-    <li>🥗 Evita procesados</li>
-    <li>😴 Duerme 7–8 horas</li>
-  </ul>
-</div>
+<input id="edad" type="number" placeholder="Edad">
+<input id="peso" type="number" placeholder="Peso (libras)">
+<input id="altura" type="number" placeholder="Altura (cm)">
 
-<footer>
-  © 2026 Fit23D PRO
-</footer>
+<select id="actividad">
+  <option value="1.2">Sedentario</option>
+  <option value="1.375">Ligero</option>
+  <option value="1.55">Moderado</option>
+  <option value="1.725">Activo</option>
+</select>
+
+<select id="objetivo">
+  <option value="-500">Bajar grasa</option>
+  <option value="0">Mantener</option>
+  <option value="500">Subir masa</option>
+</select>
+
+<select id="comidas">
+  <option value="3">3 comidas</option>
+  <option value="5">5 comidas</option>
+</select>
+
+<!-- BOTÓN CORRECTO -->
+<button id="btnGenerar" type="button">
+  Generar Plan de Alimentación
+</button>
+
+<div id="salida"></div>
+</section>
 
 <script>
-function calcularIMC(){
-  const peso=+peso.value/2.20462;
-  const h=+altura.value/100;
-  if(!peso||!h){resultado.innerText="Datos inválidos";return;}
-  const imc=(peso/(h*h)).toFixed(2);
-  resultado.innerHTML="Tu IMC es <b>"+imc+"</b>";
-}
+document.getElementById("btnGenerar").addEventListener("click", generarDieta);
 
-function generarPlanPDF(){
-  const nombre=nombrePlan.value||"Usuario";
-  const sexo=sexoPlan.value;
-  const nivel=nivelPlan.value;
-  const objetivo=objetivoPlan.value;
-  if(!sexo||!nivel||!objetivo){alert("Completa todos los campos");return;}
+function generarDieta() {
 
-  let series="3x12", descanso="60s";
-  if(nivel==="Intermedio"){series="4x10";descanso="75s";}
-  if(nivel==="Avanzado"){series=4"x15";descanso="90s";}
+  const sexo = document.getElementById("sexo").value;
+  const edad = Number(document.getElementById("edad").value);
+  const pesoLbs = Number(document.getElementById("peso").value);
+  const altura = Number(document.getElementById("altura").value);
+  const actividad = Number(document.getElementById("actividad").value);
+  const objetivo = Number(document.getElementById("objetivo").value);
+  const comidas = Number(document.getElementById("comidas").value);
 
-  const rutina={
-    Hombre:{
-      Lunes:["Pectorales","Biceps"],
-      Martes:["Cuadriceps","Pantorillas"],
-      Miércoles:["Hombros","Triceps"],
-      Jueves:["Espalda","Trapecio"],
-      Viernes:["Brazos","Abdominales"]
-    },
-    Mujer:{
-      Lunes:["Gluteos","Cuadriceps"],
-      Martes:["Espalda","Hombros"],
-      Miércoles:["Cuadriceps","Hip Thrust"],
-      Jueves:["Hombros","Pectorales"],
-      Viernes:["Femorales","Brazos","Abdominales"]
-    }
-  };
+  if(!sexo || !edad || !pesoLbs || !altura){
+    document.getElementById("salida").innerHTML =
+      "❌ Por favor completa todos los campos.";
+    return;
+  }
 
-  const {jsPDF}=window.jspdf;
-  const pdf=new jsPDF();
-  pdf.setFontSize(18);
-  pdf.text("PLAN DE ENTRENAMIENTO FIT23D",15,20);
-  pdf.setFontSize(12);
-  pdf.text(`Nombre: ${nombre}`,15,30);
-  pdf.text(`Sexo: ${sexo}`,15,38);
-  pdf.text(`Nivel: ${nivel}`,15,46);
-  pdf.text(`Objetivo: ${objetivo}`,15,54);
-  pdf.text(`Series: ${series} | Descanso: ${descanso}`,15,62);
+  const pesoKg = pesoLbs / 2.20462;
 
-  let y=75;
-  Object.keys(rutina[sexo]).forEach(d=>{
-    pdf.text(d,15,y); y+=6;
-    rutina[sexo][d].forEach(e=>{
-      pdf.text(`• ${e} ${series}`,20,y); y+=6;
-    });
-    y+=4;
-  });
+  let tmb = sexo === "hombre"
+    ? 88.36 + (13.4 * pesoKg) + (4.8 * altura) - (5.7 * edad)
+    : 447.6 + (9.2 * pesoKg) + (3.1 * altura) - (4.3 * edad);
 
-  pdf.save(`${nombre}_Plan_Fit23D.pdf`);
+  const calorias = Math.round((tmb * actividad) + objetivo);
+  const caloriasPorComida = Math.round(calorias / comidas);
+
+  const alimentos = [
+    ["Arroz", "Pollo", "Aguacate", "Ensalada"],
+    ["Batata", "Pescado", "Aceite de oliva", "Vegetales"],
+    ["Pasta integral", "Carne magra", "Frutos secos", "Brócoli"],
+    ["Papas", "Huevos", "Queso bajo grasa", "Espinaca"]
+  ];
+
+  let html = `<h3>🔥 Calorías diarias: ${calorias} kcal</h3>`;
+
+  for(let i=0;i<comidas;i++){
+    const menu = alimentos[Math.floor(Math.random()*alimentos.length)];
+
+    html += `
+    <strong>Comida ${i+1}</strong><br>
+    🍚 ${menu[0]}: ${Math.round(caloriasPorComida*0.45/4)} g<br>
+    🍗 ${menu[1]}: ${Math.round(caloriasPorComida*0.35/4)} g<br>
+    🥑 ${menu[2]}: ${Math.round(caloriasPorComida*0.20/9)} g<br>
+    🥗 ${menu[3]}: libre<br><br>
+    `;
+  }
+
+  document.getElementById("salida").innerHTML = html;
 }
 </script>
 
