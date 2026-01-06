@@ -3,40 +3,46 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Fit23D PRO – Plan de Alimentación</title>
+<title>Fit23D PRO</title>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 <style>
-body{font-family:Arial;background:#f5f7fa;margin:0;padding:0}
+body{font-family:Arial;background:#f5f7fa;margin:0}
 header{
 background:linear-gradient(135deg,#1e90ff,#ff7f50);
-color:#fff;padding:50px 20px;text-align:center}
-.box{
+color:#fff;padding:60px 20px;text-align:center
+}
+section{
 background:#fff;
-max-width:700px;
+max-width:800px;
 margin:30px auto;
 padding:25px;
 border-radius:15px;
 box-shadow:0 10px 20px rgba(0,0,0,.1)
 }
+h2{color:#1e90ff}
 input,select,button{
 width:100%;
 padding:12px;
 margin:8px 0;
 border-radius:8px;
-border:1px solid #ddd;
-font-size:1em
+border:1px solid #ddd
 }
 button{
 background:#1e90ff;
-color:white;
+color:#fff;
 border:none;
-cursor:pointer;
-font-size:1.1em
+font-size:1.1em;
+cursor:pointer
 }
 button:hover{background:#1874cd}
-.day{margin-bottom:15px}
+.testimonio{
+background:#e6f4ff;
+padding:15px;
+border-radius:10px;
+margin:10px 0
+}
 footer{text-align:center;padding:20px;color:#666}
 </style>
 </head>
@@ -44,11 +50,21 @@ footer{text-align:center;padding:20px;color:#666}
 <body>
 
 <header>
-<h1>Plan de Alimentación Profesional</h1>
-<p>Dieta real, basada en ciencia y alimentos reales</p>
+<h1>Fit23D PRO</h1>
+<p>Plan profesional de nutrición y progreso real</p>
 </header>
 
-<div class="box">
+<!-- IMC -->
+<section>
+<h2>Calcula tu IMC</h2>
+<input type="number" id="pesoIMC" placeholder="Peso (lbs)">
+<input type="number" id="alturaIMC" placeholder="Altura (cm)">
+<button onclick="calcularIMC()">Calcular IMC</button>
+<p id="resultadoIMC"></p>
+</section>
+
+<!-- OBJETIVOS -->
+<section>
 <h2>Cuéntanos tus objetivos</h2>
 
 <select id="sexo">
@@ -82,10 +98,32 @@ footer{text-align:center;padding:20px;color:#666}
 <option value="5">5 comidas</option>
 </select>
 
-<button onclick="generarPlan()">Generar Plan Profesional</button>
-</div>
+<button onclick="generarPlan()">Generar Plan de Alimentación</button>
+</section>
 
-<div class="box" id="resultado"></div>
+<!-- RESULTADO (SOLO ESTO CAMBIA) -->
+<section id="resultadoPlan">
+<h2>Tu plan aparecerá aquí</h2>
+</section>
+
+<!-- TIPS -->
+<section>
+<h2>Tips de Nutrición</h2>
+<ul>
+<li>💧 Bebe al menos 2 litros de agua</li>
+<li>🍗 Proteína en cada comida</li>
+<li>🥦 Vegetales todos los días</li>
+<li>😴 Duerme 7–8 horas</li>
+</ul>
+</section>
+
+<!-- TESTIMONIOS -->
+<section>
+<h2>Resultados Reales</h2>
+<div class="testimonio">Juan: “Bajé 6 lb en 3 semanas”</div>
+<div class="testimonio">María: “Plan fácil y real”</div>
+<div class="testimonio">Carlos: “Lo mejor que he probado”</div>
+</section>
 
 <footer>
 &copy; 2026 Fit23D PRO
@@ -95,123 +133,61 @@ footer{text-align:center;padding:20px;color:#666}
 let planGlobal=[];
 let caloriasGlobal=0;
 
-function generarPlan(){
+// IMC
+function calcularIMC(){
+const p=document.getElementById("pesoIMC").value/2.20462;
+const a=document.getElementById("alturaIMC").value/100;
+const imc=(p/(a*a)).toFixed(2);
+document.getElementById("resultadoIMC").innerText="Tu IMC es: "+imc;
+}
 
-const sexo=document.getElementById("sexo").value;
+// PLAN
+function generarPlan(){
+const sexo=sexo=document.getElementById("sexo").value;
 const edad=+document.getElementById("edad").value;
-const pesoLb=+document.getElementById("peso").value;
+const peso=+document.getElementById("peso").value/2.20462;
 const altura=+document.getElementById("altura").value;
 const actividad=+document.getElementById("actividad").value;
 const objetivo=document.getElementById("objetivo").value;
 const comidas=+document.getElementById("comidas").value;
 
-if(!sexo||!edad||!pesoLb||!altura||!actividad||!objetivo||!comidas){
+if(!sexo||!edad||!peso||!altura||!actividad||!objetivo||!comidas){
 alert("Completa todos los campos");
 return;
 }
 
-const pesoKg=pesoLb/2.20462;
-
-// Harris Benedict
 let tmb=sexo==="hombre"
-?88.36+(13.4*pesoKg)+(4.8*altura)-(5.7*edad)
-:447.6+(9.2*pesoKg)+(3.1*altura)-(4.3*edad);
+?88.36+(13.4*peso)+(4.8*altura)-(5.7*edad)
+:447.6+(9.2*peso)+(3.1*altura)-(4.3*edad);
 
 let calorias=tmb*actividad;
-if(objetivo==="deficit")calorias*=0.8;
-if(objetivo==="superavit")calorias*=1.15;
+if(objetivo==="deficit") calorias*=0.8;
+if(objetivo==="superavit") calorias*=1.15;
 
-calorias=Math.round(calorias);
-caloriasGlobal=calorias;
+caloriasGlobal=Math.round(calorias);
 
-planGlobal=crearPlan(comidas);
-
-let html=`<h2>🔥 ${calorias} kcal diarias</h2>`;
-
-planGlobal.forEach(d=>{
-html+=`
-<div class="day">
-<h3>${d.dia}</h3>
-🥣 <strong>Desayuno:</strong> ${d.desayuno}<br>
-🍛 <strong>Almuerzo:</strong> ${d.almuerzo}<br>
-🍽️ <strong>Cena:</strong> ${d.cena}
-${comidas===5?`<br>🍎 <strong>Merienda:</strong> ${d.merienda}<br>🥛 <strong>Snack:</strong> ${d.snack}`:""}
-</div>`;
-});
-
-html+=`<button onclick="descargarPDF()">📄 Descargar PDF</button>`;
-document.getElementById("resultado").innerHTML=html;
-}
-
-function crearPlan(comidas){
-return[
-{
-dia:"Lunes",
-desayuno:"Avena + huevos + banana",
-almuerzo:"Arroz + pollo a la plancha + aguacate + ensalada",
-cena:"Pescado + batata + vegetales",
-merienda:"Yogur griego + frutas",
-snack:"Nueces"
-},
-{
-dia:"Martes",
-desayuno:"Pan integral + huevos + fruta",
-almuerzo:"Arroz integral + carne magra + ensalada",
-cena:"Pollo + yuca + vegetales",
-merienda:"Batido de frutas",
-snack:"Maní"
-},
-{
-dia:"Miércoles",
-desayuno:"Avena + mantequilla de maní",
-almuerzo:"Pasta integral + pollo + vegetales",
-cena:"Pescado + arroz + ensalada",
-merienda:"Yogur",
-snack:"Almendras"
-},
-{
-dia:"Jueves",
-desayuno:"Pan integral + huevos",
-almuerzo:"Arroz + carne + aguacate",
-cena:"Pollo + batata",
-merienda:"Fruta",
-snack:"Nueces"
-},
-{
-dia:"Viernes",
-desayuno:"Avena + frutas",
-almuerzo:"Arroz + pollo + ensalada",
-cena:"Pescado + vegetales",
-merienda:"Yogur",
-snack:"Maní"
-}
+planGlobal=[
+"Lunes: Arroz + Pollo + Aguacate + Ensalada",
+"Martes: Pasta + Carne + Vegetales",
+"Miércoles: Arroz + Pescado + Vegetales",
+"Jueves: Batata + Pollo + Ensalada",
+"Viernes: Arroz + Carne + Vegetales"
 ];
+
+let html=`<h2>🔥 ${caloriasGlobal} kcal</h2>`;
+planGlobal.forEach(d=>html+=`<p>${d}</p>`);
+html+=`<button onclick="descargarPDF()">📄 Descargar PDF</button>`;
+
+document.getElementById("resultadoPlan").innerHTML=html;
 }
 
+// PDF
 function descargarPDF(){
-const { jsPDF } = window.jspdf;
+const {jsPDF}=window.jspdf;
 const pdf=new jsPDF();
-
-pdf.setFontSize(18);
-pdf.text("PLAN DE ALIMENTACIÓN PROFESIONAL",20,20);
-pdf.setFontSize(12);
-pdf.text(`Calorías diarias: ${caloriasGlobal}`,20,35);
-
-let y=50;
-planGlobal.forEach(d=>{
-pdf.setFont(undefined,"bold");
-pdf.text(d.dia,20,y); y+=7;
-pdf.setFont(undefined,"normal");
-pdf.text(`Desayuno: ${d.desayuno}`,20,y); y+=7;
-pdf.text(`Almuerzo: ${d.almuerzo}`,20,y); y+=7;
-pdf.text(`Cena: ${d.cena}`,20,y); y+=7;
-if(d.merienda){pdf.text(`Merienda: ${d.merienda}`,20,y); y+=7;}
-if(d.snack){pdf.text(`Snack: ${d.snack}`,20,y); y+=7;}
-y+=5;
-if(y>270){pdf.addPage();y=20;}
-});
-
-pdf.save("Plan_Alimentacion_Fit23D.pdf");
+pdf.text("Plan de Alimentación Fit23D",20,20);
+planGlobal.forEach((d,i)=>pdf.text(d,20,40+i*10));
+pdf.save("Plan_Fit23D.pdf");
 }
 </script>
 
