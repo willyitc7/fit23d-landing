@@ -2,158 +2,141 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
+<title>Fit23D PRO</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Fit23D | Plan Profesional</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 <style>
-body {
-  font-family: Arial, sans-serif;
-  background:#f4f6f9;
-  margin:0;
-  padding:20px;
-  text-align:center;
-}
-
-header {
-  background:linear-gradient(135deg,#1e90ff,#ff7f50);
-  color:#fff;
-  padding:50px 20px;
-  border-radius:20px;
-}
-
-section {
-  background:#fff;
-  margin:25px auto;
-  padding:25px;
-  max-width:600px;
-  border-radius:15px;
-  box-shadow:0 5px 15px rgba(0,0,0,0.1);
-}
-
-input, select, button {
-  padding:12px;
-  width:90%;
-  margin:8px 0;
-  border-radius:8px;
-  border:1px solid #ccc;
-}
-
-button {
-  background:#ff7f50;
-  color:#fff;
-  font-size:16px;
-  border:none;
-  cursor:pointer;
-}
-
-button:hover {
-  background:#ff6333;
-}
-
-#salida {
-  margin-top:20px;
-  text-align:left;
-  font-size:15px;
-}
+body{font-family:Arial;background:#f5f7fa;margin:0;padding:0;text-align:center}
+header{background:linear-gradient(135deg,#1e90ff,#ff7f50);color:#fff;padding:60px}
+section{background:#fff;margin:30px auto;padding:25px;border-radius:15px;max-width:600px;box-shadow:0 10px 25px rgba(0,0,0,.1)}
+input,select,button{width:100%;padding:12px;margin:8px 0;border-radius:10px;border:1px solid #ddd;font-size:1em}
+button{background:#1e90ff;color:#fff;border:none;cursor:pointer}
+button:hover{background:#1874cd}
+.result{margin-top:15px;font-weight:bold}
 </style>
 </head>
 
 <body>
 
 <header>
-  <h1>Plan Fitness Inteligente</h1>
-  <p>Dieta profesional personalizada</p>
+<h1>Fit23D PRO</h1>
+<p>Dieta y entrenamiento calculados por ciencia</p>
 </header>
 
 <section>
-<h2>Cuéntanos tus objetivos</h2>
-
+<h2>Tu Perfil</h2>
+<input id="nombre" placeholder="Tu nombre">
 <select id="sexo">
-  <option value="">Sexo</option>
-  <option value="hombre">Hombre</option>
-  <option value="mujer">Mujer</option>
+<option value="">Sexo</option>
+<option>Hombre</option>
+<option>Mujer</option>
 </select>
-
 <input id="edad" type="number" placeholder="Edad">
-<input id="peso" type="number" placeholder="Peso (libras)">
+<input id="peso" type="number" placeholder="Peso (lbs)">
 <input id="altura" type="number" placeholder="Altura (cm)">
-
 <select id="actividad">
-  <option value="1.2">Sedentario</option>
-  <option value="1.375">Ligero</option>
-  <option value="1.55">Moderado</option>
-  <option value="1.725">Activo</option>
+<option value="">Actividad física</option>
+<option value="1.2">Sedentario</option>
+<option value="1.375">Ligero</option>
+<option value="1.55">Moderado</option>
+<option value="1.725">Alto</option>
 </select>
-
 <select id="objetivo">
-  <option value="-500">Bajar grasa</option>
-  <option value="0">Mantener</option>
-  <option value="500">Subir masa</option>
+<option value="">Objetivo</option>
+<option value="deficit">Perder grasa</option>
+<option value="mantener">Mantener</option>
+<option value="superavit">Ganar masa</option>
 </select>
-
 <select id="comidas">
-  <option value="3">3 comidas</option>
-  <option value="5">5 comidas</option>
+<option value="3">3 comidas</option>
+<option value="5">5 comidas</option>
 </select>
 
-<!-- BOTÓN CORRECTO -->
-<button id="btnGenerar" type="button">
-  Generar Plan de Alimentación
-</button>
-
-<div id="salida"></div>
+<button onclick="generarPlan()">Generar mi Plan</button>
+<div class="result" id="info"></div>
 </section>
 
 <script>
-document.getElementById("btnGenerar").addEventListener("click", generarDieta);
+function generarPlan(){
 
-function generarDieta() {
+const nombre=document.getElementById("nombre").value||"Usuario";
+const sexo=document.getElementById("sexo").value;
+const edad=+document.getElementById("edad").value;
+const pesoLbs=+document.getElementById("peso").value;
+const altura=+document.getElementById("altura").value;
+const actividad=+document.getElementById("actividad").value;
+const objetivo=document.getElementById("objetivo").value;
+const comidas=+document.getElementById("comidas").value;
 
-  const sexo = document.getElementById("sexo").value;
-  const edad = Number(document.getElementById("edad").value);
-  const pesoLbs = Number(document.getElementById("peso").value);
-  const altura = Number(document.getElementById("altura").value);
-  const actividad = Number(document.getElementById("actividad").value);
-  const objetivo = Number(document.getElementById("objetivo").value);
-  const comidas = Number(document.getElementById("comidas").value);
+if(!sexo||!edad||!pesoLbs||!altura||!actividad||!objetivo){
+alert("Completa todos los campos");
+return;
+}
 
-  if(!sexo || !edad || !pesoLbs || !altura){
-    document.getElementById("salida").innerHTML =
-      "❌ Por favor completa todos los campos.";
-    return;
-  }
+// Harris Benedict
+const pesoKg=pesoLbs/2.20462;
+let tmb = sexo==="Hombre"
+? 88.36 + (13.4*pesoKg)+(4.8*altura)-(5.7*edad)
+: 447.6 + (9.2*pesoKg)+(3.1*altura)-(4.3*edad);
 
-  const pesoKg = pesoLbs / 2.20462;
+let calorias = tmb * actividad;
+if(objetivo==="deficit") calorias -= 500;
+if(objetivo==="superavit") calorias += 400;
 
-  let tmb = sexo === "hombre"
-    ? 88.36 + (13.4 * pesoKg) + (4.8 * altura) - (5.7 * edad)
-    : 447.6 + (9.2 * pesoKg) + (3.1 * altura) - (4.3 * edad);
+// MACROS
+const proteina = pesoKg*2;
+const grasa = pesoKg*1;
+const carbos = (calorias - (proteina*4 + grasa*9))/4;
 
-  const calorias = Math.round((tmb * actividad) + objetivo);
-  const caloriasPorComida = Math.round(calorias / comidas);
+// ALIMENTOS
+const proteinas=["Pechuga de pollo","Carne magra","Pescado","Huevos"];
+const carbosList=["Arroz","Pasta","Batata","Avena"];
+const grasasList=["Aguacate","Aceite de oliva","Maní"];
+const vegetales=["Ensalada verde","Brócoli","Vegetales mixtos"];
 
-  const alimentos = [
-    ["Arroz", "Pollo", "Aguacate", "Ensalada"],
-    ["Batata", "Pescado", "Aceite de oliva", "Vegetales"],
-    ["Pasta integral", "Carne magra", "Frutos secos", "Brócoli"],
-    ["Papas", "Huevos", "Queso bajo grasa", "Espinaca"]
-  ];
+function pick(arr){return arr[Math.floor(Math.random()*arr.length)]}
 
-  let html = `<h3>🔥 Calorías diarias: ${calorias} kcal</h3>`;
+let dieta=[];
+for(let d=1;d<=7;d++){
+let dia=[];
+for(let c=1;c<=comidas;c++){
+dia.push({
+proteina:pick(proteinas),
+carbo:pick(carbosList),
+grasa:pick(grasasList),
+veg:pick(vegetales)
+});
+}
+dieta.push(dia);
+}
 
-  for(let i=0;i<comidas;i++){
-    const menu = alimentos[Math.floor(Math.random()*alimentos.length)];
+// PDF
+const {jsPDF}=window.jspdf;
+const pdf=new jsPDF();
+pdf.setFontSize(16);
+pdf.text(`Plan Fit23D PRO - ${nombre}`,10,15);
+pdf.setFontSize(12);
+pdf.text(`Calorías diarias: ${Math.round(calorias)} kcal`,10,25);
 
-    html += `
-    <strong>Comida ${i+1}</strong><br>
-    🍚 ${menu[0]}: ${Math.round(caloriasPorComida*0.45/4)} g<br>
-    🍗 ${menu[1]}: ${Math.round(caloriasPorComida*0.35/4)} g<br>
-    🥑 ${menu[2]}: ${Math.round(caloriasPorComida*0.20/9)} g<br>
-    🥗 ${menu[3]}: libre<br><br>
-    `;
-  }
+let y=35;
+dieta.forEach((dia,i)=>{
+pdf.text(`Día ${i+1}`,10,y);y+=6;
+dia.forEach((m,j)=>{
+pdf.text(`Comida ${j+1}:`,12,y);y+=5;
+pdf.text(`- ${m.proteina} 150g`,15,y);y+=5;
+pdf.text(`- ${m.carbo} 120g`,15,y);y+=5;
+pdf.text(`- ${m.grasa} 30g`,15,y);y+=5;
+pdf.text(`- ${m.veg}`,15,y);y+=6;
+});
+y+=4;
+if(y>270){pdf.addPage();y=20;}
+});
 
-  document.getElementById("salida").innerHTML = html;
+pdf.save(`Fit23D_${nombre}.pdf`);
+
+document.getElementById("info").innerHTML=
+`Plan generado ✔️<br>Calorías: ${Math.round(calorias)} kcal`;
 }
 </script>
 
