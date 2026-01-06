@@ -22,10 +22,8 @@ header p{margin:15px 0 30px;}
   background:#ffdd57;color:#000;
   padding:18px 50px;font-size:1.3em;
   border:none;border-radius:50px;
-  cursor:pointer;transition:.3s;
+  cursor:pointer;
 }
-.cta-btn:hover{transform:scale(1.05);}
-
 .box{
   background:#fff;padding:30px;
   border-radius:20px;
@@ -43,13 +41,6 @@ header p{margin:15px 0 30px;}
   background:#1e90ff;color:#fff;
   border:none;cursor:pointer;
 }
-.box button:hover{background:#1874cd;}
-
-.testimonio{
-  background:#e0f7ff;padding:15px;
-  border-radius:15px;margin:10px 0;
-}
-
 footer{margin:50px 0;color:#555;}
 </style>
 </head>
@@ -95,61 +86,63 @@ footer{margin:50px 0;color:#555;}
   <button onclick="generarPlanPDF()">Generar PDF Profesional</button>
 </div>
 
-<div class="box">
-  <h2>Tips de Nutrición</h2>
-  <ul>
-    <li>💧 2 litros de agua diarios</li>
-    <li>🍗 Proteína en cada comida</li>
-    <li>🥗 Evita procesados</li>
-    <li>😴 Duerme 7–8 horas</li>
-  </ul>
-</div>
-
-<footer>
-  © 2026 Fit23D PRO
-</footer>
+<footer>© 2026 Fit23D PRO</footer>
 
 <script>
 function calcularIMC(){
-  const peso=+peso.value/2.20462;
-  const h=+altura.value/100;
-  if(!peso||!h){resultado.innerText="Datos inválidos";return;}
-  const imc=(peso/(h*h)).toFixed(2);
-  resultado.innerHTML="Tu IMC es <b>"+imc+"</b>";
+  const pesoLbs = document.getElementById("peso").value;
+  const alturaCm = document.getElementById("altura").value;
+  const resultado = document.getElementById("resultado");
+
+  if(!pesoLbs || !alturaCm){
+    resultado.innerText="Datos inválidos";
+    return;
+  }
+
+  const pesoKg = pesoLbs / 2.20462;
+  const h = alturaCm / 100;
+  const imc = (pesoKg / (h*h)).toFixed(2);
+
+  resultado.innerHTML = `Tu IMC es <b>${imc}</b>`;
 }
 
 function generarPlanPDF(){
-  const nombre=nombrePlan.value||"Usuario";
-  const sexo=sexoPlan.value;
-  const nivel=nivelPlan.value;
-  const objetivo=objetivoPlan.value;
-  if(!sexo||!nivel||!objetivo){alert("Completa todos los campos");return;}
+  const nombre = document.getElementById("nombrePlan").value || "Usuario";
+  const sexo = document.getElementById("sexoPlan").value;
+  const nivel = document.getElementById("nivelPlan").value;
+  const objetivo = document.getElementById("objetivoPlan").value;
+
+  if(!sexo || !nivel || !objetivo){
+    alert("Completa todos los campos");
+    return;
+  }
 
   let series="3x12", descanso="60s";
-  if(nivel==="Intermedio"){series="4x10";descanso="75s";}
-  if(nivel==="Avanzado"){series=4"x15";descanso="90s";}
+  if(nivel==="Intermedio"){series="4x10"; descanso="75s";}
+  if(nivel==="Avanzado"){series="4x15"; descanso="90s";}
 
   const rutina={
     Hombre:{
-      Lunes:["Pectorales","Biceps"],
-      Martes:["Cuadriceps","Pantorillas"],
-      Miércoles:["Hombros","Triceps"],
-      Jueves:["Espalda","Trapecio"],
+      Lunes:["Pectorales","Bíceps"],
+      Martes:["Piernas"],
+      Miércoles:["Hombros","Tríceps"],
+      Jueves:["Espalda"],
       Viernes:["Brazos","Abdominales"]
     },
     Mujer:{
-      Lunes:["Gluteos","Cuadriceps"],
+      Lunes:["Glúteos","Cuádriceps"],
       Martes:["Espalda","Hombros"],
-      Miércoles:["Cuadriceps","Hip Thrust"],
-      Jueves:["Hombros","Pectorales"],
-      Viernes:["Femorales","Brazos","Abdominales"]
+      Miércoles:["Piernas"],
+      Jueves:["Pecho","Hombros"],
+      Viernes:["Femorales","Abdomen"]
     }
   };
 
-  const {jsPDF}=window.jspdf;
-  const pdf=new jsPDF();
+  const { jsPDF } = window.jspdf;
+  const pdf = new jsPDF();
+
   pdf.setFontSize(18);
-  pdf.text("PLAN DE ENTRENAMIENTO FIT23D",15,20);
+  pdf.text("PLAN DE ENTRENAMIENTO FIT23D", 15, 20);
   pdf.setFontSize(12);
   pdf.text(`Nombre: ${nombre}`,15,30);
   pdf.text(`Sexo: ${sexo}`,15,38);
@@ -158,9 +151,9 @@ function generarPlanPDF(){
   pdf.text(`Series: ${series} | Descanso: ${descanso}`,15,62);
 
   let y=75;
-  Object.keys(rutina[sexo]).forEach(d=>{
-    pdf.text(d,15,y); y+=6;
-    rutina[sexo][d].forEach(e=>{
+  Object.keys(rutina[sexo]).forEach(dia=>{
+    pdf.text(dia,15,y); y+=6;
+    rutina[sexo][dia].forEach(e=>{
       pdf.text(`• ${e} ${series}`,20,y); y+=6;
     });
     y+=4;
